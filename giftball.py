@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import random
 
 
 class State(ABC):
@@ -60,7 +61,11 @@ class OneTokenState(State):
         return True
 
     def turn_crank(self):
-        self.machine.current_state = DispensingState(self.machine)
+        # 20% de chance de tomber sur 2 balles
+        if random.random() < 0.2:
+            self.machine.current_state = DoubleDispensingState(self.machine)
+        else:
+            self.machine.current_state = DispensingState(self.machine)
         self.machine.current_state.dispense()
         return True
 
@@ -91,6 +96,39 @@ class DispensingState(State):
             return False
 
         self.machine.ball_count -= 1
+        if self.machine.ball_count == 0:
+            self.machine.current_state = SoldOutState(self.machine)
+        else:
+            self.machine.current_state = NoTokenState(self.machine)
+        return True
+
+    def refill(self, count: int):
+        add = max(0, int(count))
+        if add <= 0:
+            return False
+        self.machine.ball_count += add
+        return True
+
+
+class DoubleDispensingState(State):
+    def insert_token(self):
+        return False
+
+    def eject_token(self):
+        return False
+
+    def turn_crank(self):
+        return False
+
+    def dispense(self):
+        if self.machine.ball_count <= 0:
+            self.machine.current_state = SoldOutState(self.machine)
+            return False
+
+        self.machine.ball_count -= 1
+        if self.machine.ball_count > 0:
+            self.machine.ball_count -= 1
+
         if self.machine.ball_count == 0:
             self.machine.current_state = SoldOutState(self.machine)
         else:
