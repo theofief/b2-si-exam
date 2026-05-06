@@ -11,4 +11,3 @@ python3 main.py
 Fichiers principaux:
 - `giftball.py` : implementation de la classe `GiftBall` et de l'enum `State`.
 - `main.py` : petit exemple d'exécution.
-- `docs/` : diagrammes MCD / MLD / MPD demandés.

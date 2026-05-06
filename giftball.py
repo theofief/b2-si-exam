@@ -9,23 +9,14 @@ class State(Enum):
 
 
 class GiftBall:
-    """Représente la machine distributrice de balles surprise.
-
-    Attributs d'instance
-    - current_state: l'état courant (valeur de `State`)
-    - ball_count: nombre de balles restantes
-    """
+    """Représente la machine distributrice de balles surprise"""
 
     def __init__(self, initial_balls: int = 0):
         self.ball_count = max(0, int(initial_balls))
         self.current_state = State.SOLD_OUT if self.ball_count == 0 else State.NO_TOKEN
 
     def insert_token(self):
-        """Insère un jeton dans la machine.
-
-        Si la machine est en `NO_TOKEN` et a des balles, passe à `ONE_TOKEN`.
-        Sinon n'a pas d'effet (retourne False).
-        """
+        """Insère un jeton dans la machine"""
         if self.current_state == State.NO_TOKEN:
             if self.ball_count > 0:
                 self.current_state = State.ONE_TOKEN
@@ -36,17 +27,14 @@ class GiftBall:
         return False
 
     def eject_token(self):
-        """Ejecte le jeton si présent (retourne True si éjecté)."""
+        """Ejecte le jeton si présent"""
         if self.current_state == State.ONE_TOKEN:
             self.current_state = State.NO_TOKEN
             return True
         return False
 
     def turn_crank(self):
-        """Tourner la manivelle pour tenter d'obtenir une balle.
-        Si un jeton est présent, passe à l'état `DISPENSING` puis appelle `dispense`.
-        Retourne True si l'opération a commencé, False sinon.
-        """
+        """Tourner la manivelle pour tenter d'obtenir une balle"""
         if self.current_state == State.ONE_TOKEN:
             self.current_state = State.DISPENSING
             self.dispense()
@@ -54,7 +42,7 @@ class GiftBall:
         return False
 
     def dispense(self):
-        """Distribue une balle si possible. Met à jour l'état en conséquence."""
+        """Distribue une balle si possible"""
         if self.current_state != State.DISPENSING:
             return False
         if self.ball_count <= 0:
@@ -71,7 +59,7 @@ class GiftBall:
         return True
 
     def refill(self, count: int):
-        """Remplit la machine de `count` balles (positive)."""
+        """Remplit la machine de `count` balles"""
         add = max(0, int(count))
         if add == 0:
             return False
